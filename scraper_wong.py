@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import WebDriverException
 from bs4 import BeautifulSoup
@@ -8,17 +9,30 @@ import time
 import sys
 import os
 import io
+import logging
 
 # =============================
-# SOLUCION ENCODING WINDOWS
+# ENCODING WINDOWS
 # =============================
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # =============================
+# LOGGING
+# =============================
+logging.basicConfig(
+    filename="scraping_wong.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+# =============================
 # CONFIGURACIÓN
 # =============================
 URL_WONG = "https://www.wong.pe/higiene-salud-y-belleza/salud"
+
+CHROMEDRIVER_PATH = r"C:\scraping_wong\chromedriver.exe"
+BRAVE_PATH = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
 
 # =============================
 # CONEXIÓN A SQL SERVER
@@ -33,39 +47,42 @@ try:
     )
     cursor = conn.cursor()
     print("✅ Conexión exitosa a SQL Server")
+    logging.info("Conectado a SQL Server")
 except Exception as e:
+    logging.error(f"Error conexión BD: {e}")
     print("❌ Error al conectar a SQL Server")
-    print(e)
     sys.exit()
 
 # =============================
-# SELENIUM (MULTI-NAVEGADOR)
+# SELENIUM (AUTO NAVEGADOR)
 # =============================
 driver = None
 try:
-    print("🌐 Iniciando navegador automáticamente...")
+    print("🌐 Iniciando navegador...")
 
     options = Options()
     options.add_argument("--start-maximized")
 
-    # Selenium Manager detecta el navegador disponible
-    driver = webdriver.Chrome(options=options)
+    if os.path.exists(BRAVE_PATH):
+        options.binary_location = BRAVE_PATH
+        print("➡️ Usando Brave")
+    else:
+        print("➡️ Usando Chrome")
 
-    print("✅ Navegador iniciado correctamente")
-    print(f"➡️ Accediendo a: {URL_WONG}")
+    if os.path.exists(CHROMEDRIVER_PATH):
+        service = Service(CHROMEDRIVER_PATH)
+        driver = webdriver.Chrome(service=service, options=options)
+    else:
+        driver = webdriver.Chrome(options=options)
 
     driver.get(URL_WONG)
-
-    # Esperar carga completa
     time.sleep(8)
 
-    # =============================
-    # SCRAPING
-    # =============================
     soup = BeautifulSoup(driver.page_source, "html.parser")
     productos = soup.select("div.product-item")
 
     print(f"📦 Productos encontrados: {len(productos)}")
+    logging.info(f"{len(productos)} productos detectados")
 
     contador = 0
 
@@ -95,18 +112,20 @@ try:
                 contador += 1
 
             except ValueError:
-                print(f"⚠️ Precio inválido: {precio_txt} | Producto: {nombre_txt}")
+                logging.warning(f"Precio inválido: {precio_txt}")
+                print(f"⚠️ Precio inválido: {precio_txt}")
 
     conn.commit()
-    print(f"✅ Éxito: {contador} productos insertados en la base de datos")
+    print(f"✅ {contador} productos insertados en la base de datos")
+    logging.info(f"{contador} productos insertados")
 
 except WebDriverException as e:
+    logging.error(f"Error Selenium: {e}")
     print("❌ Error al iniciar el navegador")
-    print(e)
 
 except Exception as e:
+    logging.error(f"Error scraping: {e}")
     print("❌ Error durante el scraping")
-    print(e)
 
 finally:
     if driver:
