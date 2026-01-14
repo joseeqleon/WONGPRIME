@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import WebDriverException
 from bs4 import BeautifulSoup
@@ -7,7 +6,6 @@ import pyodbc
 from datetime import datetime
 import time
 import sys
-import os
 import io
 import logging
 
@@ -26,13 +24,12 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+logging.info("===== INICIO DEL SCRAPING =====")
+
 # =============================
 # CONFIGURACIÓN
 # =============================
 URL_WONG = "https://www.wong.pe/higiene-salud-y-belleza/salud"
-
-CHROMEDRIVER_PATH = r"C:\scraping_wong\chromedriver.exe"
-BRAVE_PATH = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
 
 # =============================
 # CONEXIÓN A SQL SERVER
@@ -46,11 +43,11 @@ try:
         "Trusted_Connection=yes;"
     )
     cursor = conn.cursor()
-    print("✅ Conexión exitosa a SQL Server")
-    logging.info("Conectado a SQL Server")
+    print("✅ Conexion exitosa a SQL Server")
+    logging.info("Conexion exitosa a SQL Server")
 except Exception as e:
-    logging.error(f"Error conexión BD: {e}")
     print("❌ Error al conectar a SQL Server")
+    logging.error(f"Error conexión SQL Server: {e}")
     sys.exit()
 
 # =============================
@@ -58,22 +55,13 @@ except Exception as e:
 # =============================
 driver = None
 try:
-    print("🌐 Iniciando navegador...")
+    print("🌐 Iniciando navegador automáticamente...")
 
     options = Options()
     options.add_argument("--start-maximized")
 
-    if os.path.exists(BRAVE_PATH):
-        options.binary_location = BRAVE_PATH
-        print("➡️ Usando Brave")
-    else:
-        print("➡️ Usando Chrome")
-
-    if os.path.exists(CHROMEDRIVER_PATH):
-        service = Service(CHROMEDRIVER_PATH)
-        driver = webdriver.Chrome(service=service, options=options)
-    else:
-        driver = webdriver.Chrome(options=options)
+    # Selenium Manager decide navegador + driver
+    driver = webdriver.Chrome(options=options)
 
     driver.get(URL_WONG)
     time.sleep(8)
@@ -82,9 +70,10 @@ try:
     productos = soup.select("div.product-item")
 
     print(f"📦 Productos encontrados: {len(productos)}")
-    logging.info(f"{len(productos)} productos detectados")
+    logging.info(f"Productos encontrados: {len(productos)}")
 
     contador = 0
+    duplicados = 0
 
     for producto in productos:
         nombre = producto.select_one("p.product-title")
@@ -97,35 +86,45 @@ try:
             try:
                 precio_num = float(precio_txt)
 
-                cursor.execute("""
-                    INSERT INTO productos_wong
-                    (nombre, precio, categoria, url, fecha_extraccion)
-                    VALUES (?, ?, ?, ?, ?)
-                """,
-                nombre_txt,
-                precio_num,
-                "Salud",
-                URL_WONG,
-                datetime.now()
-                )
+                try:
+                    cursor.execute("""
+                        INSERT INTO productos_wong
+                        (nombre, precio, categoria, url, fecha_extraccion)
+                        VALUES (?, ?, ?, ?, ?)
+                    """,
+                    nombre_txt,
+                    precio_num,
+                    "Salud",
+                    URL_WONG,
+                    datetime.now()
+                    )
 
-                contador += 1
+                    contador += 1
+
+                except pyodbc.IntegrityError:
+                    # Captura duplicados por índice único
+                    duplicados += 1
+                    logging.info(f"Duplicado ignorado: {nombre_txt}")
 
             except ValueError:
                 logging.warning(f"Precio inválido: {precio_txt}")
                 print(f"⚠️ Precio inválido: {precio_txt}")
 
     conn.commit()
-    print(f"✅ {contador} productos insertados en la base de datos")
-    logging.info(f"{contador} productos insertados")
+
+    print(f"✅ Insertados: {contador}")
+    print(f"⏭️ Duplicados ignorados: {duplicados}")
+
+    logging.info(f"Insertados: {contador}")
+    logging.info(f"Duplicados ignorados: {duplicados}")
 
 except WebDriverException as e:
-    logging.error(f"Error Selenium: {e}")
     print("❌ Error al iniciar el navegador")
+    logging.error(f"Error Selenium: {e}")
 
 except Exception as e:
-    logging.error(f"Error scraping: {e}")
     print("❌ Error durante el scraping")
+    logging.error(f"Error scraping: {e}")
 
 finally:
     if driver:
@@ -134,3 +133,5 @@ finally:
     if conn:
         conn.close()
         print("🔒 Conexión a SQL Server cerrada")
+
+    logging.info("===== FIN DEL SCRAPING =====")
