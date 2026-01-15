@@ -38,7 +38,11 @@ try:
     print("🔌 Conectando a SQL Server...")
     conn = pyodbc.connect(
         "DRIVER={SQL Server};"
+<<<<<<< HEAD
         "SERVER=localhost\\SQLEXPRESS;"
+=======
+        "SERVER=LP\\SQLEXPRESS;"
+>>>>>>> 6e55e524704f405b1fd33acfbf892f8362ac9725
         "DATABASE=ScrapingWong;"
         "Trusted_Connection=yes;"
     )
