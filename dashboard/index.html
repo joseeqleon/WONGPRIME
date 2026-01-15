@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WongPrime - Comparador de Precios</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header fade-in">
+            <h1>🛒 WongPrime</h1>
+            <p>Comparador de Precios Multi-Tienda</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card fade-in">
+                <h3>Productos</h3>
+                <div class="value" id="statProductos">-</div>
+            </div>
+            <div class="stat-card fade-in">
+                <h3>Tiendas</h3>
+                <div class="value" id="statTiendas">-</div>
+            </div>
+            <div class="stat-card fade-in">
+                <h3>Categorías</h3>
+                <div class="value" id="statCategorias">-</div>
+            </div>
+            <div class="stat-card fade-in">
+                <h3>Alertas Activas</h3>
+                <div class="value" id="statAlertas">-</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left: Products -->
+            <div class="section fade-in">
+                <h2>Productos</h2>
+                
+                <!-- Search and Filters -->
+                <div class="search-filters">
+                    <input type="text" id="searchInput" placeholder="Buscar productos...">
+                    <select id="categoriaFilter">
+                        <option value="">Todas las categorías</option>
+                    </select>
+                    <select id="marcaFilter">
+                        <option value="">Todas las marcas</option>
+                    </select>
+                    <button class="btn" onclick="app.loadProductos()">Buscar</button>
+                </div>
+
+                <div id="alertsContainer"></div>
+
+                <!-- Products Table -->
+                <div class="products-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Marca</th>
+                                <th>Categoría</th>
+                                <th>Precio Mínimo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <tr>
+                                <td colspan="5" class="loading">
+                                    <div class="spinner"></div>
+                                    Cargando productos...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right: Sidebar -->
+            <div class="sidebar">
+                <!-- Create Alert -->
+                <div class="sidebar-section fade-in">
+                    <h3>Crear Alerta de Precio</h3>
+                    <form id="alertForm" onsubmit="app.createAlert(event)">
+                        <div class="form-group">
+                            <label>Producto ID:</label>
+                            <input type="number" id="alertProductoId" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="alertEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Precio Objetivo (S/):</label>
+                            <input type="number" step="0.01" id="alertPrecio" required>
+                        </div>
+                        <button type="submit" class="btn" style="width: 100%;">
+                            Crear Alerta
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="sidebar-section fade-in">
+                    <h3>Enlaces Rápidos</h3>
+                    <button class="btn btn-secondary" style="width:100%; margin-bottom:10px;" onclick="window.open('http://localhost:8000/docs', '_blank')">
+                        📚 API Docs
+                    </button>
+                    <button class="btn btn-secondary" style="width:100%; margin-bottom:10px;" onclick="app.downloadReport()">
+                        📊 Descargar Reporte
+                    </button>
+                </div>
+
+                <!-- Info -->
+                <div class="sidebar-section fade-in">
+                    <h3>ℹ️ Información</h3>
+                    <p style="color: #666; font-size: 0.9em; line-height: 1.6;">
+                        Este dashboard te permite comparar precios de productos entre Wong, Metro y Plaza Vea.
+                        Crea alertas para recibir notificaciones cuando los precios bajen.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Product Detail -->
+    <div id="productModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="app.closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

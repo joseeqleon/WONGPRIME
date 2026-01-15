@@ -1,0 +1,25 @@
+2026-01-15 11:45:59,718 - INFO - ===== INICIO DEL SCRAPING =====
+2026-01-15 11:46:18,209 - ERROR - Error conexión SQL Server: ('08001', '[08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]No existe el servidor SQL Server o se ha denegado el acceso al mismo. (17) (SQLDriverConnect); [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()). (53)')
+2026-01-15 11:46:25,880 - INFO - ===== INICIO DEL SCRAPING =====
+2026-01-15 11:46:40,799 - INFO - ===== INICIO DEL SCRAPING =====
+2026-01-15 11:46:41,830 - ERROR - Error conexión SQL Server: ('08001', '[08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]No existe el servidor SQL Server o se ha denegado el acceso al mismo. (17) (SQLDriverConnect); [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()). (53)')
+2026-01-15 11:46:57,050 - ERROR - Error conexión SQL Server: ('08001', '[08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]No existe el servidor SQL Server o se ha denegado el acceso al mismo. (17) (SQLDriverConnect); [08001] [Microsoft][ODBC SQL Server Driver][DBNETLIB]ConnectionOpen (Connect()). (53)')
+2026-01-15 11:48:27,485 - INFO - ===== INICIO DEL SCRAPING =====
+2026-01-15 11:48:27,766 - INFO - Conexion exitosa a SQL Server
+2026-01-15 11:48:49,061 - INFO - ===== INICIO DEL SCRAPING =====
+2026-01-15 11:48:49,249 - INFO - Conexion exitosa a SQL Server
+2026-01-15 11:49:57,884 - ERROR - Error scraping: ('Connection aborted.', ConnectionResetError(10054, 'Se ha forzado la interrupción de una conexión existente por el host remoto', None, 10054, None))
+2026-01-15 11:50:01,946 - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=57037): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/f85878731971af9822bea449b861bc0c
+2026-01-15 11:50:06,009 - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=57037): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/f85878731971af9822bea449b861bc0c
+2026-01-15 11:50:10,078 - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError("HTTPConnection(host='localhost', port=57037): Failed to establish a new connection: [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión")': /session/f85878731971af9822bea449b861bc0c
+2026-01-15 11:50:14,148 - INFO - ===== FIN DEL SCRAPING =====
+2026-01-15 11:50:47,521 - INFO - Productos encontrados: 0
+2026-01-15 11:50:47,524 - INFO - Insertados: 0
+2026-01-15 11:50:47,524 - INFO - Duplicados ignorados: 0
+2026-01-15 11:50:56,508 - INFO - ===== FIN DEL SCRAPING =====
+2026-01-15 11:57:39,110 - INFO - ===== INICIO DEL SCRAPING =====
+2026-01-15 11:57:39,298 - INFO - Conexion exitosa a SQL Server
+2026-01-15 11:58:01,883 - INFO - Productos encontrados: 0
+2026-01-15 11:58:01,902 - INFO - Insertados: 0
+2026-01-15 11:58:01,903 - INFO - Duplicados ignorados: 0
+2026-01-15 11:58:08,273 - INFO - ===== FIN DEL SCRAPING =====
